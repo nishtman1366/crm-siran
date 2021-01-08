@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Profiles;
 
+use App\Exceptions\NotificationException;
 use App\Exports\Profiles\ProfileExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Notifications\NotificationController;
 use App\Imports\Profiles\ProfileImport;
 use App\Models\Profiles\Profile;
 use App\Models\Profiles\LicenseType;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProfileController extends Controller
 {
@@ -46,6 +49,13 @@ class ProfileController extends Controller
                     }
                 }
             });
+
+        $pspId = $request->query('pspId', null);
+        if (!is_null($pspId)) {
+            $profilesQuery->where(function ($query) use ($pspId) {
+                $query->where('psp_id', $pspId);
+            });
+        }
 
         $statusId = $request->query('statusId', null);
         if (!is_null($statusId)) {
@@ -84,15 +94,17 @@ class ProfileController extends Controller
         $fromDate = str_replace('/', '-', $fromDate);
         $jFromDate = $fromDate;
         $fromDate = Jalalian::fromFormat('Y-m-d', $fromDate)->toCarbon()->hour(0)->minute(0)->second(0);
-        $profilesQuery->where('created_at', '>=', $fromDate);
+        $profilesQuery->where('updated_at', '>=', $fromDate);
 
         $toDate = $request->query('toDate', Jalalian::now()->format('Y-m-d'));
         $toDate = str_replace('/', '-', $toDate);
         $jToDate = $toDate;
         $toDate = Jalalian::fromFormat('Y-m-d', $toDate)->toCarbon()->hour(23)->minute(59)->second(59);
-        $profilesQuery->where('created_at', '<=', $toDate);
+        $profilesQuery->where('updated_at', '<=', $toDate);
 
-        $profiles = $profilesQuery->orderBy('updated_at', 'DESC')->paginate(30);
+        $profiles = $profilesQuery->orderBy('updated_at', 'DESC')
+            ->paginate(30);
+
         $paginatedLinks = paginationLinks($profiles->appends($request->query->all()));
 
 
@@ -115,8 +127,12 @@ class ProfileController extends Controller
             ['id' => 12, 'name' => 'درخواست ابطال'],
             ['id' => 13, 'name' => 'عدم تایید سریال'],
             ['id' => 14, 'name' => 'درخواست جابجایی'],
-            ['id' => 15, 'name' => 'رد درخواست جابجایی'],
+            ['id' => 15, 'name' => 'اختصاص سریال جدید'],
+            ['id' => 16, 'name' => 'رد درخواست جابجایی'],
         ];
+
+        $psps = Psp::where('status', 1)->orderBy('name', 'ASC')->get();
+
         $agents = [];
         if ($user->isAdmin() || $user->isSuperuser()) {
             $agents = User::where('level', 'AGENT')->where(function ($query) use ($user) {
@@ -135,6 +151,9 @@ class ProfileController extends Controller
         return Inertia::render('Dashboard/Profiles/ProfilesList',
             [
                 'profiles' => $profiles,
+
+                'psps' => $psps,
+                'pspId' => $pspId,
 
                 'statusId' => $statusId,
                 'statuses' => $statuses,
@@ -225,14 +244,15 @@ class ProfileController extends Controller
             ]);
         }
 
+        if ($status === 8) {
+            $device = Device::find($profile->device_id);
+            if (is_null($device)) throw new NotFoundHttpException('اطلاعات دستگاه یافت نشد.');
+            $device->update(['transport_status' => 3]);
+        }
+
         $profile->fill($request->all());
         $profile->save();
 
-        if ($status === 8) {
-            Device::find($profile->device_id)->update([
-                'transport_status' => 3
-            ]);
-        }
         $this->setProfileMessage($status, $user, $profile, $request->get('message', null));
 
         if ($status == 2 || $status == 4) return back()->with(['message' => 'پرونده در لیست در حال بررسی قرار گرفت']);
@@ -274,17 +294,18 @@ class ProfileController extends Controller
 
         $user = Auth::user();
         $profileId = $request->route('profileId');
+
         $profile = Profile::find($profileId);
-        if (is_null($profile)) return response()->json(['message' => 'اطلاعات پرونده یافت نشد'], 404);
+        if (is_null($profile)) throw new NotFoundHttpException('اطلاعات پرونده یافت نشد.');
+
+        $device = Device::find($profile->device_id);
+        if (is_null($device)) throw new NotFoundHttpException('اطلاعات دستگاه یافت نشد.');
+        $device->update(['psp_status' => 2]);
 
         $request->merge(['status' => 7]);
         $profile->fill($request->all());
 
         $profile->save();
-
-        Device::find($profile->device_id)->update([
-            'psp_status' => 2
-        ]);
 
         $this->setProfileMessage(7, $user, $profile, null);
 
@@ -416,7 +437,7 @@ class ProfileController extends Controller
 
         $user = Auth::user();
         $profileId = $request->route('profileId');
-        $profile = Profile::find($profileId);
+        $profile = Profile::with('customer')->find($profileId);
         if (is_null($profile)) return response()->json(['message' => 'اطلاعات پرونده یافت نشد'], 404);
 
         $oldDevice = Device::find($profile->device_id);
@@ -448,10 +469,6 @@ class ProfileController extends Controller
         switch ($status) {
             default:
             case 1:
-//                $user->notifyNow(1, [
-//                    'customer_name' => $profile->customer->fullName,
-//                    'marketer_name' => $user->name,
-//                ]);
                 $title = sprintf('ثبت اطلاعات پرونده توسط %s انجام شد.', $user->name);
                 $type = 'SUCCESS';
                 break;
@@ -533,6 +550,9 @@ class ProfileController extends Controller
             'title' => $title,
             'type' => $type
         ]);
+
+        NotificationController::handleProfileNotifications('PROFILE', $profile, $user);
+
     }
 
     public function downloadExcel(Request $request)

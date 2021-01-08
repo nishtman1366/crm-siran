@@ -1,5 +1,6 @@
 <?php
 
+use App\Libraries\TemplateEngine;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -71,7 +72,7 @@ Artisan::command('setProfileId', function () {
                 $license->profile_id = $customer->profile_id;
             }
         }
-//        DELETE FROM `licenses` WHERE `id`=129 or id=130 or id=131 or id=132 or id=228 or id=229
+
         switch ($license->name) {
             case 'national_card_file_1':
             case 'national_card_file_2':
@@ -111,4 +112,3 @@ Artisan::command('sms', function () {
 
     $user->notifyNow(new \App\Notifications\Profiles\AdminNotification(1, ['order_id' => '12334']));
 });
-

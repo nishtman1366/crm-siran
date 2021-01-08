@@ -38,7 +38,7 @@
                                  v-for="event in repair.events" :key="event.id">
                                 <p class="text-sm text-gray-400 mt-2">{{event.jDate | persianDigit}}</p>
                                 <p class="font-bold ml-1">{{event.title}}
-                                    <span class="text-xs text-gray-400">{{event.user.name}}</span>
+                                    <span class="text-xs text-gray-400">{{event.user && event.user.name}}</span>
                                 </p>
                                 <p v-if="event.description" class="text-justify">{{event.description}}</p>
                             </div>
@@ -490,7 +490,6 @@
                 message: '',
                 updateRepairForm: this.$inertia.form({
                     '_method': 'PUT',
-                    user_id: this.repair.user_id,
                     device_type_id: this.repair.device_type_id,
                     psp_id: this.repair.psp_id,
                     serial: this.repair.serial,
@@ -512,7 +511,6 @@
                 }),
                 updateRepairStatusForm: this.$inertia.form({
                     '_method': 'PUT',
-                    user_id: this.repair.user_id,
                     status: '',
                     message: ''
                 }, {

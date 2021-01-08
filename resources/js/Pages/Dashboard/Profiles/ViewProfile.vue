@@ -341,6 +341,14 @@
                                             class="block text-red-600 hover:text-red-400">حذف این تصویر
                                         </InertiaLink>
                                     </div>
+                                    <div v-if="$page.user.level=='ADMIN' || $page.user.level=='SUPERUSER'"
+                                         class="sm:col-span-8 text-left my-2">
+                                        <a :href="route('dashboard.profiles.licenses.downloadZipArchive',{profileId:profile.id})" target="_blank">
+                                            <jet-button class="bg-red-500 hover:bg-red-400">دریافت همه مدارک به صورت
+                                                یکجا
+                                            </jet-button>
+                                        </a>
+                                    </div>
                                     <div class="col-span-2 sm:col-span-8">
                                         <jet-section-border/>
                                     </div>
@@ -467,11 +475,7 @@
                                             </JetButton>
                                             <!-- تغییر وضعیت پرونده توسط بازاریاب جهت بررسی مجدد -->
                                             <JetButton @click.native="updateProfileInfo(1)"
-                                                       v-if="profile.status===10"
-                                                       class="bg-yellow-600 hover:bg-yellow-800">ارسال جهت بررسی مجدد
-                                            </JetButton>
-                                            <JetButton @click.native="updateProfileInfo(4)"
-                                                       v-if="profile.status===11"
+                                                       v-if="profile.status===10 || profile.status===11"
                                                        class="bg-yellow-600 hover:bg-yellow-800">ارسال جهت بررسی مجدد
                                             </JetButton>
                                         </div>

@@ -173,6 +173,18 @@
                             </inertia-link>
                         </li>
                         <li v-if="$page.user.level=='SUPERUSER'">
+                            <inertia-link :href="route('dashboard.settings.notifications.types.list')">
+                                <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">textsms</i>
+                                انواع اعلان ها
+                            </inertia-link>
+                        </li>
+                        <li v-if="$page.user.level=='SUPERUSER'">
+                            <inertia-link :href="route('dashboard.settings.notifications.events.list')">
+                                <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">sms_failed</i>
+                                تنظیمات اعلان ها
+                            </inertia-link>
+                        </li>
+                        <li v-if="$page.user.level=='SUPERUSER'">
                             <inertia-link :href="route('dashboard.settings.main')">
                                 <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">security</i>
                                 پشتیبان گیری / بازیابی اطلاعات
