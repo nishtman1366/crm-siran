@@ -270,6 +270,7 @@
                                 </tbody>
                             </table>
                             <pagination
+                                :totalRows="profiles.total"
                                 :urlsArray="paginatedLinks"
                                 :previousPageUrl="profiles.prev_page_url"
                                 :nextPageUrl="profiles.next_page_url"

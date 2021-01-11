@@ -157,6 +157,7 @@
                                 </tbody>
                             </table>
                             <pagination
+                                :totalRows="repairs.total"
                                 :urlsArray="paginatedLinks"
                                 :previousPageUrl="repairs.prev_page_url"
                                 :nextPageUrl="repairs.next_page_url"

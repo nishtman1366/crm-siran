@@ -120,6 +120,7 @@
                                         <option value="">وضعیت</option>
                                         <option value="1">ثبت شده</option>
                                         <option value="2">تایید شده</option>
+                                        <option value="3">رد شده</option>
                                     </select>
                                 </div>
                             </div>
@@ -232,6 +233,7 @@
                                 </tbody>
                             </table>
                             <pagination
+                                :totalRows="devices.total"
                                 :urlsArray="paginatedLinks"
                                 :previousPageUrl="devices.prev_page_url"
                                 :nextPageUrl="devices.next_page_url"

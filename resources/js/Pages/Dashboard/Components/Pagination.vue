@@ -28,13 +28,18 @@
                 </li>
             </InertiaLink>
         </ul>
+        <div class="text-left my-1">
+          <span class="bg-gray-200 m-3 p-3 rounded">
+                تعداد پرونده ها: {{totalRows}}
+          </span>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
         name: "Pagination",
-        props: ['urlsArray', 'previousPageUrl', 'nextPageUrl'],
+        props: ['urlsArray', 'previousPageUrl', 'nextPageUrl', 'totalRows'],
     }
 </script>
 

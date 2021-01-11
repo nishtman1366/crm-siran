@@ -75,6 +75,7 @@
                                 </tbody>
                             </table>
                             <pagination
+                                :totalRows="users.total"
                                 :urlsArray="paginatedLinks"
                                 :previousPageUrl="users.prev_page_url"
                                 :nextPageUrl="users.next_page_url"
