@@ -172,6 +172,7 @@ return [
         'license_code' => 'شماره جواز کسب',
         'license_date' => 'تاریخ صدور جواز کسب',
         'license_file' => 'تصویر جواز کسب',
+        'tax_code'=>'کد مالیاتی',
 
         'accounts.*.bank_id' => 'نام بانک',
         'accounts.*.branch' => 'کد شعبه',
