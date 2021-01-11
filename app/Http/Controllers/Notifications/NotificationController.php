@@ -21,10 +21,17 @@ class NotificationController extends Controller
         $users = [];
         foreach ($events as $event) {
             $notifiableUser = null;
-            if ($event->level == 'SUPERUSER' || $event->level == 'ADMIN') {
+            if ($event->level == 'SUPERUSER') {
                 $notifiableUser = User::find(1);
-//            } elseif ($event->level == 'ADMIN') {
-//                $notifiableUser = User::where('level', 'ADMIN')->get()->first();
+            } elseif ($event->level == 'ADMIN') {
+                $profileUser = $container->user;
+                if ($profileUser->isSuperuser() || $profileUser->isAdmin()) {
+                    $notifiableUser = $profileUser;
+                } elseif ($profileUser->isAgent()) {
+                    $notifiableUser = $profileUser->parent;
+                } elseif ($profileUser->isMarketer()) {
+                    $notifiableUser = $profileUser->parent->parent;
+                }
             } elseif ($event->level == 'AGENT') {
                 $profileUser = $container->user;
                 if ($profileUser->isSuperuser() || $profileUser->isAdmin() || $profileUser->isAgent()) {
@@ -39,7 +46,7 @@ class NotificationController extends Controller
                     $notifiableUser = $container->customer;
                 } elseif ($type == 'REPAIRS') {
                     $notifiableUser = $container;
-                }elseif($type=='DEVICES'){
+                } elseif ($type == 'DEVICES') {
                     $notifiableUser = $container->user;
                 }
             }
