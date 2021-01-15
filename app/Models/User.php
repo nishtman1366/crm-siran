@@ -32,7 +32,9 @@ class User extends Authenticatable
         'password',
         'level',
         'parent_id',
-        'status'
+        'status',
+        'company_name',
+        'company_logo',
     ];
 
     /**
@@ -62,7 +64,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $appends = [
-        'profile_photo_url', 'statusText', 'levelText'
+        'profile_photo_url', 'statusText', 'levelText', 'companyLogoUrl'
     ];
 
     public function getStatusTextAttribute()
@@ -92,6 +94,14 @@ class User extends Authenticatable
             case 'TECHNICAL':
                 return 'کارشناس فنی';
         }
+    }
+
+    public function getCompanyLogoUrlAttribute()
+    {
+        if (!is_null($this->attributes['company_logo'])) {
+            return url('storage') . '/companies/' . $this->attributes['id'] . '/' . $this->attributes['company_logo'];
+        }
+        return systemConfig('COMPANY_LOGO');
     }
 
     public function setPasswordAttribute($value)
@@ -134,6 +144,6 @@ class User extends Authenticatable
 
     protected function defaultProfilePhotoUrl()
     {
-        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=7F9CF5&background=EBF4FF';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
 }

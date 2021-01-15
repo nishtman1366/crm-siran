@@ -118,6 +118,43 @@
                                         <jet-input-error :message="userForm.error('status')"
                                                          class="mt-2"/>
                                     </div>
+                                    <div class="sm:col-span-6 border-b border-gray-500">
+
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <label for="company_name" class="block text-sm font-medium text-gray-700">
+                                            نام شرکت:
+                                        </label>
+                                        <input type="text"
+                                               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md border"
+                                               placeholder="نام شرکت"
+                                               ref="company_name"
+                                               id="company_name"
+                                               v-model="userForm.company_name"
+                                               @keyup.enter.native="submitUserForm"/>
+                                        <jet-input-error :message="userForm.error('company_name')"
+                                                         class="mt-2"/>
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <input type="file" class="hidden"
+                                               ref="photo"
+                                               @change="updatePhotoPreview">
+                                        <div class="mt-2" v-show="photoPreview">
+                                            <span class="block rounded-full w-20 h-20"
+                                                  :style="'background-size: cover; background-repeat: no-repeat; background-position: center center; background-image: url(\'' + photoPreview + '\');'">
+                                            </span>
+                                        </div>
+                                        <jet-secondary-button class="mt-2 mr-2" type="button"
+                                                              @click.native.prevent="selectNewPhoto">
+                                            انتخاب لوگوی شرکت
+                                        </jet-secondary-button>
+
+                                        <jet-secondary-button type="button" class="mt-2"
+                                                              @click.native.prevent="deletePhoto"
+                                                              v-if="photoPreview">
+                                            حذف تصویر کنونی
+                                        </jet-secondary-button>
+                                    </div>
                                     <div class="col-6 sm:col-span-6 text-left">
                                         <button type="submit"
                                                 class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -139,10 +176,11 @@
     import Dashboard from "@/Pages/Dashboard";
     import JetButton from '@/Jetstream/Button';
     import JetInputError from '@/Jetstream/InputError';
+    import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
     export default {
         name: "CreateUser",
-        components: {Dashboard, JetButton, JetInputError},
+        components: {Dashboard, JetButton, JetInputError, JetSecondaryButton},
         props: {
             type: String,
             userType: String,
@@ -151,9 +189,7 @@
         },
         data() {
             return {
-                imageFiles: {
-                    imageFilePreview: '',
-                },
+                photoPreview: null,
                 userForm: this.$inertia.form({
                     '_method': 'POST',
                     parent_id: this.$page.user.id,
@@ -162,6 +198,9 @@
                     password: '',
                     mobile: '',
                     status: 1,
+                    company_name: null,
+                    companyLogo: null,
+                    deleteCompanyLogo: false,
                 }, {
                     bag: 'userForm',
                     resetOnSuccess: false
@@ -169,7 +208,27 @@
             }
         },
         methods: {
+            selectNewPhoto() {
+                this.$refs.photo.click();
+            },
+            updatePhotoPreview() {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    this.photoPreview = e.target.result;
+                };
+
+                reader.readAsDataURL(this.$refs.photo.files[0]);
+                this.userForm.deleteCompanyLogo = false;
+            },
+            deletePhoto() {
+                this.userForm.deleteCompanyLogo = true;
+                this.photoPreview = null
+            },
             submitUserForm() {
+                if (this.$refs.photo) {
+                    this.userForm.companyLogo = this.$refs.photo.files[0]
+                }
                 this.userForm.post(route('dashboard.users.store', {type: this.type}), {
                     preserveScroll: true
                 }).then(response => {

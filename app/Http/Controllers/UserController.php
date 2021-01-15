@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -75,8 +76,16 @@ class UserController extends Controller
             'status' => 'required',
         ]);
         $type = $request->route('type');
+
         $request->merge(['level' => strtoupper($type)]);
-        User::create($request->all());
+        $user = User::create($request->all());
+
+        if ($request->hasFile('companyLogo')) {
+            Storage::disk('public')->delete('companies/' . $user->id . '/' . $user->company_logo);
+            $name = $request->file('companyLogo')->store('public/companies/' . $user->id);
+            $user->company_logo = basename($name);
+            $user->save();
+        }
 
         return redirect()->route('dashboard.users.list', ['type' => $type]);
     }
@@ -122,8 +131,20 @@ class UserController extends Controller
         $user = User::find($userId);
         if (is_null($user)) return response()->json('not found', 404);
 
+        if ($request->hasFile('companyLogo')) {
+            Storage::disk('public')->delete('companies/' . $user->id . '/' . $user->company_logo);
+            $name = $request->file('companyLogo')->store('public/companies/' . $user->id);
+            $request->merge(['company_logo' => basename($name)]);
+        }
+
+        if ($request->has('deleteCompanyLogo') && $request->get('deleteCompanyLogo')) {
+            Storage::disk('public')->delete('companies/' . $user->id . '/' . $user->company_logo);
+            $request->merge(['company_logo' => null]);
+        }
+
         $user->fill($request->all());
         $user->save();
+
         $type = $request->route('type');
 
         return redirect()->route('dashboard.users.list', ['type' => $type]);
