@@ -21,7 +21,9 @@ class NotificationController extends Controller
         $users = [];
         foreach ($events as $event) {
             $notifiableUser = null;
+            Log::channel('notifications')->info('status:' . $container->status);
             if ($event->level == 'SUPERUSER') {
+                Log::channel('notifications')->info('It`s for superuser');
                 $notifiableUser = User::find(1);
             } elseif ($event->level == 'ADMIN') {
                 $profileUser = $container->user;
