@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Profiles\Business;
 
+use App\Rules\UniquePostalCode;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateBusiness extends FormRequest
 {
@@ -34,12 +36,12 @@ class CreateBusiness extends FormRequest
             'name' => 'required',
             'name_english' => 'required',
             'senf' => 'required',
-            'postal_code' => 'required|unique:businesses,postal_code',
+            'postal_code' => ['required', new UniquePostalCode((int)$this->get('profile_id'))],
             'address' => 'required',
             'phone_code' => 'required',
             'phone' => 'required',
-            'tax_code' => 'required|numeric|digits:10',
             'has_license' => 'required|in:YES,NO',
+            'tax_code' => 'required'
         ];
         $hasLicense = $this->input('has_license');
 
@@ -47,11 +49,11 @@ class CreateBusiness extends FormRequest
             $validationArray = array_merge($validationArray, [
                 'license_code' => 'required',
                 'license_date' => 'required|date',
-                'license_file' => 'required|image',
+                'license_file' => 'required|image|mimetypes:image/jpg,image/jpeg',
             ]);
         } elseif ($hasLicense == 'NO') {
             $validationArray = array_merge($validationArray, [
-                'esteshhad_file' => 'required|image',
+                'esteshhad_file' => 'required|mimetypes:image/jpg,image/jpeg',
             ]);
         }
         return $validationArray;

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Profiles\Business;
 
 use App\Models\Profiles\Business;
+use App\Rules\UniquePostalCode;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBusiness extends FormRequest
@@ -37,12 +38,12 @@ class UpdateBusiness extends FormRequest
             'name' => 'required',
             'name_english' => 'required',
             'senf' => 'required',
-            'postal_code' => 'required|unique:businesses,postal_code,' . $business->id,
+            'postal_code' => ['required', new UniquePostalCode((int)$this->get('profile_id'), true)],
             'address' => 'required',
             'phone_code' => 'required',
             'phone' => 'required',
-            'tax_code' => 'required|numeric|digits:10',
             'has_license' => 'required|in:YES,NO',
+            'tax_code' => 'required',
         ];
 
         $hasLicense = $this->input('has_license');
@@ -50,11 +51,11 @@ class UpdateBusiness extends FormRequest
             $validationArray = array_merge($validationArray, [
                 'license_code' => 'required',
                 'license_date' => 'required|date',
-                'license_file' => 'nullable|image',
+                'license_file' => 'nullable|image|mimetypes:image/jpg,image/jpeg',
             ]);
         } else {
             $validationArray = array_merge($validationArray, [
-                'esteshhad_file' => 'nullable|image',
+                'esteshhad_file' => 'nullable|image|mimetypes:image/jpg,image/jpeg',
             ]);
         }
         $profileId = $this->route('profileId');
@@ -62,11 +63,11 @@ class UpdateBusiness extends FormRequest
         if (!is_null($business)) {
             if ($business->has_license == 'NO' && $hasLicense == 'YES') {
                 $validationArray = array_merge($validationArray, [
-                    'license_file' => 'required|image',
+                    'license_file' => 'required|image|mimetypes:image/jpg,image/jpeg',
                 ]);
             } elseif ($business->has_license == 'YES' && $hasLicense == 'NO') {
                 $validationArray = array_merge($validationArray, [
-                    'esteshhad_file' => 'required|image',
+                    'esteshhad_file' => 'required|image|mimetypes:image/jpg,image/jpeg',
                 ]);
             }
         }
