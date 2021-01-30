@@ -198,7 +198,7 @@
                                             <i class="material-icons">check_circle</i>
                                         </button>
                                         <button
-                                            v-if="profile.status==3 && ($page.user.level=='SUPERUSER' || $page.user.level=='ADMIN')"
+                                            v-if="profile.status==3 && $page.user.level=='SUPERUSER'"
                                             v-on:click="updateProfileStatus(profile.id,4)"
                                             class="text-green-400 hover:text-green-500"
                                             title="ثبت در psp"
@@ -214,7 +214,7 @@
                                             <i class="material-icons">keyboard_hide</i>
                                         </button>
                                         <button
-                                            v-if="profile.status==6 && ($page.user.level=='SUPERUSER' || $page.user.level=='ADMIN')"
+                                            v-if="profile.status==6 && $page.user.level=='SUPERUSER'"
                                             v-on:click="selectTerminal(profile.id)"
                                             class="text-blue-600 hover:text-blue-700"
                                             title="تخصیص"
