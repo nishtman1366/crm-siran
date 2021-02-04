@@ -122,7 +122,7 @@
                                     <div class="sm:col-span-6 border-b border-gray-500">
 
                                     </div>
-                                    <div class="sm:col-span-3">
+                                    <div v-if="type=='admin'" class="sm:col-span-3">
                                         <label for="company_name" class="block text-sm font-medium text-gray-700">
                                             نام شرکت:
                                         </label>
@@ -136,7 +136,7 @@
                                         <jet-input-error :message="userForm.error('company_name')"
                                                          class="mt-2"/>
                                     </div>
-                                    <div class="sm:col-span-3">
+                                    <div v-if="type=='admin'" class="sm:col-span-3">
                                         <input type="file" class="hidden"
                                                ref="photo"
                                                @change="updatePhotoPreview">
