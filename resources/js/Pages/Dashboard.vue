@@ -92,6 +92,25 @@
                                     <!--                                    </div>-->
                                     <div class="col-1 sm:col-span-2">
                                         <div>
+                                            <div class="bg-blue-600 text-white p-1 text-lg">اخبار و اطلاعیه ها</div>
+                                            <div v-for="post in posts" :key="post.id" class="my-2 mx-3">
+                                                <p>
+                                                    <inertia-link :href="route('dashboard.posts.view',{postId:post.id})">
+                                                        <span class="text-base">{{post.title}}</span>
+                                                        <span class="text-xs text-gray-500"> - {{post.category ? post.category.name : ''}}</span>
+                                                        <span class="text-xs text-gray-500"> - {{post.date}}</span>
+                                                    </inertia-link>
+                                                </p>
+                                            </div>
+                                            <p class="text-left" v-if="posts.length > 0">
+                                                <inertia-link :href="route('dashboard.posts.archive')">
+                                                    <jet-button>آرشیو اخبار</jet-button>
+                                                </inertia-link>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 sm:col-span-2">
+                                        <div>
                                             <div class="bg-pink-600 text-white p-1 text-lg">جدیدترین رخدادها</div>
                                             <div class="h-80 overflow-y-auto">
                                                 <div v-for="event in events"
@@ -106,6 +125,19 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div v-if="$page.user.level!=='MARKETER'" class="col-1 sm:col-span-2">
+                                        <div>
+                                            <div class="bg-green-600 text-white p-1 text-lg">بازاریابان فعال</div>
+                                            <bar-chart :chartData="topMarketersChartData"
+                                                       :chartOptions="chartOptions"></bar-chart>
+                                        </div>
+                                        <div>
+                                            <div class="bg-purple-600 text-white p-1 text-lg">دستگاه های نصب شده</div>
+                                            <pie-chart :chartData="devicesChartData" :chartOptions="chartOptions"></pie-chart>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2">
                                         <div v-if="$page.user.level!=='MARKETER'" class="my-1">
                                             <div class="bg-green-300 text-gray-900 p-1 text-lg">وضعیت انبار</div>
                                             <div class="grid grid-cols-6 gap-2 p-1 text-md md:text-lg">
@@ -140,17 +172,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="$page.user.level!=='MARKETER'" class="col-1 sm:col-span-2">
-                                        <div>
-                                            <div class="bg-green-600 text-white p-1 text-lg">بازاریابان فعال</div>
-                                            <bar-chart :chartData="topMarketersChartData"
-                                                       :chartOptions="chartOptions"></bar-chart>
-                                        </div>
-                                        <div>
-                                            <div class="bg-purple-600 text-white p-1 text-lg">دستگاه های نصب شده</div>
-                                            <pie-chart :chartData="devicesChartData" :chartOptions="chartOptions"></pie-chart>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -167,6 +189,7 @@
     import BarChart from "@/Pages/Dashboard/Components/Charts/BarChart";
     import PieChart from "@/Pages/Dashboard/Components/Charts/PieChart";
     import VuePersianDigit from 'vue-persian-digit';
+    import JetButton from '@/Jetstream/Button'
 
     export default {
         components: {
@@ -174,6 +197,7 @@
             Welcome,
             BarChart,
             PieChart,
+            JetButton,
             VuePersianDigit,
         },
         props: {
@@ -183,6 +207,8 @@
             topMarketersChartLabels: Array,
 
             events: Array,
+
+            posts: Array,
 
             devicesStatus: Object,
 

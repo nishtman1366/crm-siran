@@ -215,5 +215,8 @@ return [
         'notification_type_id'=>'نوع اعلان',
         'event'=>'نوع رخداد',
         'level'=>'دریافت کننده',
+
+        'post_category_id'=>'دسته بندی اخبار',
+        'levels'=>'گروه های کاربری',
     ],
 ];
