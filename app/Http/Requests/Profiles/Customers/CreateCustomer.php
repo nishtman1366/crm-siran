@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Profiles\Customers;
 
+use App\Rules\NationalCode;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -35,14 +36,14 @@ class CreateCustomer extends FormRequest
             'last_name_english' => 'nullable',
             'father' => 'required',
             'father_english' => 'nullable',
-            'national_code' => 'required|numeric|digits:10',
+            'national_code' => ['required', 'numeric', 'digits:10', new NationalCode($this->get('first_name'), $this->get('last_name'))],
             'id_code' => 'required|digits_between:1,10',
             'birthday' => 'required|date',
             'gender' => ['required', Rule::in(['male', 'female']),],
             'mobile' => 'required|numeric|digits:11|starts_with:09',
-            'national_card_file_1' => 'required|image',
-            'national_card_file_2' => 'required|image',
-            'id_file' => 'required|image',
+            'national_card_file_1' => 'required|image|mimetypes:image/jpg,image/jpeg',
+            'national_card_file_2' => 'required|image|mimetypes:image/jpg,image/jpeg',
+            'id_file' => 'required|image|mimetypes:image/jpg,image/jpeg',
         ];
         $type = $this->input('type');
 
@@ -54,9 +55,9 @@ class CreateCustomer extends FormRequest
                 'reg_date' => 'required|date',
                 'reg_code' => 'required',
                 'company_national_code' => 'required|digits:11',
-                'asasname_file' => 'required|image',
-                'agahi_file_1' => 'required|image',
-                'agahi_file_2' => 'required|image',
+                'asasname_file' => 'required|image|mimetypes:image/jpg,image/jpeg',
+                'agahi_file_1' => 'required|image|mimetypes:image/jpg,image/jpeg',
+                'agahi_file_2' => 'required|image|mimetypes:image/jpg,image/jpeg',
             ]);
         }
 
