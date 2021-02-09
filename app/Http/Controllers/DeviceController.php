@@ -85,8 +85,8 @@ class DeviceController extends Controller
             });
         }
 
-        $devices = $devicesQuery->orderBy('id', 'ASC')->paginate()->appends(['typeId' => $typeId, 'modelId' => $modelId, 'searchQuery' => $searchQuery, 'physicalStatus' => $physicalStatus, 'transportStatus' => $transportStatus, 'pspStatus' => $pspStatus,]);
-        $paginatedLinks = paginationLinks($devices);
+        $devices = $devicesQuery->orderBy('id', 'DESC')->paginate(30);
+        $paginatedLinks = paginationLinks($devices->appends($request->query->all()));
 
 
         $models = DeviceType::orderBy('name', 'ASC')->get();
