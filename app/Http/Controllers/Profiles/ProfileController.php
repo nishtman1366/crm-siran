@@ -269,6 +269,7 @@ class ProfileController extends Controller
         $deviceId = $request->get('device_id');
 
         $profile->fill([
+            'device_type_id' => $request->get('device_type_id'),
             'device_id' => $deviceId,
             'status' => 6
         ]);
@@ -276,7 +277,7 @@ class ProfileController extends Controller
         $profile->save();
 
         Device::find($deviceId)->update([
-            'transport_status' => 2
+            'transport_status' => 2,
         ]);
 
         $this->setProfileMessage(6, $user, $profile, null);
