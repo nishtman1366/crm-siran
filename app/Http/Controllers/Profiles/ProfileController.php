@@ -361,7 +361,7 @@ class ProfileController extends Controller
             $profile->device->save();
         }
 
-        $this->setProfileMessage($status == 8 ? 14 : $status, $user, $profile, $request->get('message'));
+        $this->setProfileMessage($status == 8 ? 18 : $status, $user, $profile, $request->get('message'));
 
         return redirect()->route('dashboard.profiles.list')->with(['message' => 'نتیجه فسخ پرونده با موفقیت ثبت شد.']);
     }

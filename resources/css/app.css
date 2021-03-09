@@ -5,3 +5,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+div.page-title > div.container > h1{
+    color: black
+}

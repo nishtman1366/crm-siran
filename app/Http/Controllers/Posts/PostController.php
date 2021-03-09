@@ -216,7 +216,11 @@ class PostController extends Controller
             $postsQuery->whereIn('id', $userPosts);
         }
 
-        $posts = $postsQuery->where('status', 1)->orderBy('id', 'DESC')->paginate(12);
+        $posts = $postsQuery->where(function ($query) use ($user) {
+            if (!$user->isSuperuser()) {
+                $query->where('status', 1);
+            }
+        })->orderBy('id', 'DESC')->paginate(12);
         $paginatedLinks = paginationLinks($posts);
 
         $posts->each(function ($post) {
