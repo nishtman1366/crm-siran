@@ -245,6 +245,10 @@ class ProfileController extends Controller
         }
 
         if ($status === 8) {
+            $errors = LicenseController::checkProfileLicenses($profile,'install_device_form');
+            if (count($errors) > 0) {
+                return redirect()->route('dashboard.profiles.view', ['profileId' => $profileId])->withErrors($errors);
+            }
             $device = Device::find($profile->device_id);
             if (is_null($device)) throw new NotFoundHttpException('اطلاعات دستگاه یافت نشد.');
             $device->update(['transport_status' => 3]);
@@ -355,7 +359,7 @@ class ProfileController extends Controller
 
         $profile->save();
 
-        if(!$cancelType){
+        if (!$cancelType) {
             $profile->device->transport_status = 1;
             $profile->device->psp_status = 1;
             $profile->device->save();

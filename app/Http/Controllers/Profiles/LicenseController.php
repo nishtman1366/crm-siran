@@ -21,10 +21,16 @@ use ZipArchive;
  */
 class LicenseController extends Controller
 {
-    public static function checkProfileLicenses(Profile $profile)
+    public static function checkProfileLicenses(Profile $profile, $licenseType = null)
     {
         $errors = [];
-        $licenseTypes = LicenseType::where('required', 1)->get()->each(function ($type) use ($profile, &$errors) {
+        $licenseTypes = LicenseType::where(function ($query) use ($licenseType) {
+            if (is_null($licenseType)) {
+                $query->where('required', 1);
+            } else {
+                $query->where('key', $licenseType);
+            }
+        })->get()->each(function ($type) use ($profile, &$errors) {
             $licenseExistence = License::where('license_type_id', $type->id)->where('profile_id', $profile->id)->exists();
             if (($type->key === 'asasname_file' || $type->key === 'agahi_file_1' || $type->key === 'agahi_file_2') && $profile->customer->type !== 'ORGANIZATION') {
 
@@ -179,16 +185,16 @@ class LicenseController extends Controller
             }
 
             foreach ($files as $file) {
-                if (! $archive->addFile($file, basename($file))) {
-                    throw new Exception("File [`{$file}`] could not be added to the zip file: ".$archive->getStatusString());
+                if (!$archive->addFile($file, basename($file))) {
+                    throw new Exception("File [`{$file}`] could not be added to the zip file: " . $archive->getStatusString());
                 }
             }
 
-            if (! $archive->close()) {
-                throw new Exception("Could not close zip file: ".$archive->getStatusString());
+            if (!$archive->close()) {
+                throw new Exception("Could not close zip file: " . $archive->getStatusString());
             }
 
-            return response()->download($archiveFile, basename($archiveFile),['Content-Type' => 'application/octet-stream'])->deleteFileAfterSend(true);
+            return response()->download($archiveFile, basename($archiveFile), ['Content-Type' => 'application/octet-stream'])->deleteFileAfterSend(true);
         }
 
         throw new Exception("هیچ فایلی جهت فضرده سازی موجود نیست.");
