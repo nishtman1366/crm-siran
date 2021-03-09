@@ -216,11 +216,11 @@ class PostController extends Controller
             $postsQuery->whereIn('id', $userPosts);
         }
 
-        $posts = $postsQuery->orderBy('id','DESC')->paginate(12);
+        $posts = $postsQuery->where('status', 1)->orderBy('id', 'DESC')->paginate(12);
         $paginatedLinks = paginationLinks($posts);
 
         $posts->each(function ($post) {
-            $post->body = substr($post->body, 0, 250).'...';
+            $post->body = substr($post->body, 0, 250) . '...';
         });
 
         return Inertia::render('Dashboard/Posts/Archive', compact('searchQuery', 'paginatedLinks', 'categoryId', 'posts', 'categories'));
