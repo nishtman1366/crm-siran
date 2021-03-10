@@ -245,7 +245,7 @@ class ProfileController extends Controller
         }
 
         if ($status === 8) {
-            $errors = LicenseController::checkProfileLicenses($profile,'install_device_form');
+            $errors = LicenseController::checkProfileLicenses($profile, 'install_device_form');
             if (count($errors) > 0) {
                 return redirect()->route('dashboard.profiles.view', ['profileId' => $profileId])->withErrors($errors);
             }
@@ -390,6 +390,26 @@ class ProfileController extends Controller
         $this->setProfileMessage(14, $user, $profile, null);
 
         return redirect()->route('dashboard.profiles.list')->with(['message' => 'درخواست جابجایی سریال با موفقیت ثبت شد.']);
+    }
+
+    public function installDevice(Request $request)
+    {
+        $request->validateWithBag('uploadInstallFormForm', [
+            'file' => 'required|file',
+        ]);
+
+        $profileId = $request->route('profileId');
+        $profile = Profile::find($profileId);
+        if (is_null($profile)) return response()->json(['message' => 'اطلاعات پرونده یافت نشد'], 404);
+
+        if ($request->hasFile('file')) {
+            LicenseController::upload($request->file('file'), 'install_device_form', $profileId);
+        }
+
+        $profile->status = 8;
+        $profile->save();
+
+        return redirect()->route('dashboard.profiles.list')->with(['message' => 'فرم تایید نصب دستگاه با موفقیت دریافت شد.']);
     }
 
     public function getNewDeviceByAjax(Request $request)

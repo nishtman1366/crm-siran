@@ -222,7 +222,7 @@
                                             <i class="material-icons">sim_card</i>
                                         </button>
                                         <button v-if="profile.status==7"
-                                                v-on:click="updateProfileStatus(profile.id,8)"
+                                                v-on:click="installDevice(profile.id)"
                                                 class="text-green-400 hover:text-green-500"
                                                 title="نصب دستگاه"
                                                 v-b-tooltip.hover>
@@ -839,6 +839,65 @@
                     </jet-button>
                 </template>
             </jet-confirmation-modal>
+            <!-- فرم نصب دستگاه -->
+            <jet-confirmation-modal :show="viewInstallDeviceModal" @close="viewInstallDeviceModal = false">
+                <template #title>
+                    تایید نصب دستگاه
+                </template>
+                <template #content>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-right">
+                        <div class="my-3 p-2 border-r-4">
+                            جهت تایید نصب دستگاه در محل مشتری باید تصویر فرم نصب دستگاه را از طریق این بخش ارسال نمایید.
+                        </div>
+                        <div
+                            class="w-full md:w-1/2 lg:w-1/3 mt-2 mx-auto flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            <div class="space-y-1 text-center">
+                                <svg v-if="installFormFilePreview===''"
+                                     class="mx-auto h-12 w-12 text-gray-400"
+                                     stroke="currentColor"
+                                     fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path
+                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                        stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+                                </svg>
+                                <img v-else :src="installFormFilePreview">
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="install_form_file"
+                                           class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                        <span>انتخاب فایل</span>
+                                        <input id="install_form_file"
+                                               name="install_form_file"
+                                               type="file"
+                                               @change="onInstallFormFileChange($event)"
+                                               class="sr-only">
+                                    </label>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    تصویر فرم نصب
+                                </p>
+
+                                <jet-input-error
+                                    :message="uploadInstallFormForm.error('file')"
+                                    class="mt-2"/>
+                                <jet-input-error
+                                    :message="installFormFileUploadError"
+                                    class="mt-2"/>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template #footer>
+                    <jet-secondary-button class="ml-2" @click.native="viewInstallDeviceModal = false">
+                        انصراف
+                    </jet-secondary-button>
+                    <jet-button class="ml-2 bg-blue-600 hover:bg-blue-500" @click.native="submitUploadInstallForm"
+                                :class="{ 'opacity-25': uploadInstallFormForm.processing }"
+                                :disabled="uploadInstallFormForm.processing">
+                        ارسال
+                    </jet-button>
+                </template>
+            </jet-confirmation-modal>
         </template>
     </Dashboard>
 </template>
@@ -998,6 +1057,19 @@
                     confirmChangeMessage: false,
                 }, {
                     bag: 'confirmChangeSerialForm',
+                    resetOnSuccess: true
+                }),
+
+
+                viewInstallDeviceModal: false,
+                installFormProfileId: '',
+                installFormFilePreview: '',
+                installFormFileUploadError: '',
+                uploadInstallFormForm: this.$inertia.form({
+                    '_method': 'PUT',
+                    file: '',
+                }, {
+                    bag: 'uploadInstallFormForm',
                     resetOnSuccess: true
                 }),
             }
@@ -1180,7 +1252,7 @@
                 this.changeReason = changeReason;
                 this.viewSelectNewSerialModal = true;
             },
-            submitSelectNewSerial(){
+            submitSelectNewSerial() {
                 this.selectNewSerialForm.post(route('dashboard.profiles.update.newSerial', {profileId: this.profileId})).then(response => {
                     if (!this.selectNewSerialForm.hasErrors()) {
                         this.viewSelectNewSerialModal = false;
@@ -1215,6 +1287,30 @@
                         this.profileId = '';
                     }
                 })
+            },
+            installDevice(id) {
+                this.installFormProfileId = id;
+                this.viewInstallDeviceModal = true;
+            },
+            onInstallFormFileChange(e) {
+                const file = e.target.files[0];
+                if (file.size > (this.$page.configs.maximumUploadSize * 1024)) {
+                    this.installFormFileUploadError = 'فایل انتخاب شده نباید بیشتر از '
+                        + this.$page.configs.maximumUploadSize
+                        + 'کیلوبایت باشد.';
+                    return;
+                }
+                this.installFormFileUploadError = '';
+                this.uploadInstallFormForm.file = e.target.files[0];
+                this.installFormFilePreview = URL.createObjectURL(file);
+            },
+            submitUploadInstallForm() {
+                this.uploadInstallFormForm.post(route('dashboard.profiles.update.installDevice',{profileId:this.installFormProfileId}))
+                    .then(response => {
+                        if (!this.uploadInstallFormForm.hasErrors()) {
+                            this.viewInstallDeviceModal = false;
+                        }
+                    });
             },
             uploadExcel() {
                 this.viewUploadExcelModal = true;

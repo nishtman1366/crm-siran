@@ -143,6 +143,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
             Route::put('changeRequest', 'ProfileController@changeRequest')->name('update.changeRequest');
             Route::put('changeConfirm', 'ProfileController@changeConfirm')->name('update.changeConfirm');
             Route::put('newSerial', 'ProfileController@newSerial')->name('update.newSerial');
+            Route::put('installDevice', 'ProfileController@installDevice')->name('update.installDevice');
 
 
             Route::prefix('customers')->name('customers.')->group(function () {
