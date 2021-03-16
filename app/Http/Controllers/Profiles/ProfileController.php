@@ -594,7 +594,7 @@ class ProfileController extends Controller
             'title' => $title,
             'type' => $type
         ]);
-
+        if ($status === 17) $profile->status = 17;
         NotificationController::handleProfileNotifications('PROFILES', $profile, $user);
 
     }

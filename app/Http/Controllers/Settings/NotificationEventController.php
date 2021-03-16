@@ -53,6 +53,7 @@ class NotificationEventController extends Controller
             ['id' => 14, 'type' => 'PROFILES', 'name' => 'درخواست جابجایی'],
             ['id' => 15, 'type' => 'PROFILES', 'name' => 'اختصاص سریال جدید'],
             ['id' => 16, 'type' => 'PROFILES', 'name' => 'رد درخواست جابجایی'],
+            ['id' => 17, 'type' => 'PROFILES', 'name' => 'تایید سریال جدید'],
             ['id' => 1, 'type' => 'REPAIRS', 'name' => 'ثبت شده'],
             ['id' => 2, 'type' => 'REPAIRS', 'name' => 'دریافت شده توسط واحد فنی'],
             ['id' => 3, 'type' => 'REPAIRS', 'name' => 'در صف تعمیر'],
