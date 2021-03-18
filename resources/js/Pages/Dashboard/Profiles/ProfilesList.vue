@@ -167,9 +167,11 @@
                                     </td>
                                     <td class="py-4 text-center text-gray-900">
                                         <p class="text-sm text-gray-900">{{profile.user.name}}</p>
-                                        <p class="text-sm text-indigo-500">
-                                            {{profile.user.parent ? 'نماینده: '+profile.user.parent.name : ''}}
-                                        </p>
+                                        <template v-if="$page.user.level==='SUPERUSER'">
+                                            <p class="text-sm text-indigo-500">
+                                                {{profile.user.parent ? 'نماینده: '+profile.user.parent.name : ''}}
+                                            </p>
+                                        </template>
                                     </td>
                                     <td class="py-4 text-center text-gray-900">
                                         <span
@@ -1305,7 +1307,7 @@
                 this.installFormFilePreview = URL.createObjectURL(file);
             },
             submitUploadInstallForm() {
-                this.uploadInstallFormForm.post(route('dashboard.profiles.update.installDevice',{profileId:this.installFormProfileId}))
+                this.uploadInstallFormForm.post(route('dashboard.profiles.update.installDevice', {profileId: this.installFormProfileId}))
                     .then(response => {
                         if (!this.uploadInstallFormForm.hasErrors()) {
                             this.viewInstallDeviceModal = false;
