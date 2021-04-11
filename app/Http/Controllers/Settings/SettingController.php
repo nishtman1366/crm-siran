@@ -23,7 +23,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        if ($user->isSuperUser()) {
+        if (!$user->isSuperUser()) {
             throw new UnauthorizedHttpException('', 'شما اجازه دسترسی به این بخش را ندارید');
         }
         foreach ($request->except(['deleteLogo', 'COMPANY_LOGO']) as $item => $value) {
