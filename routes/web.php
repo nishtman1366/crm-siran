@@ -181,7 +181,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
             Route::prefix('licenses')->name('licenses.')->group(function () {
                 Route::post('', 'LicenseController@store')->name('store');
                 Route::delete('{licenseId}', 'LicenseController@destroy')->name('destroy');
-                Route::get('downloadZipArchive','LicenseController@downloadZipArchive')->name('downloadZipArchive');
+                Route::get('downloadZipArchive', 'LicenseController@downloadZipArchive')->name('downloadZipArchive');
             });
         });
     });
@@ -204,5 +204,15 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
             Route::put('{categoryId}', 'CategoryController@update')->name('update');
             Route::delete('{categoryId}', 'CategoryController@destroy')->name('destroy');
         });
+    });
+
+    Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
+        Route::get('', 'TransactionController@index')->name('list');
+
+        Route::get('update', 'TransactionController@create')->name('create');
+        Route::post('update', 'TransactionController@store')->name('store');
+        Route::get('update/step2', 'TransactionController@store2')->name('store2');
+
+        Route::post('dates', 'TransactionController@createDate')->name('dates.store');
     });
 });

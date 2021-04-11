@@ -55,8 +55,7 @@
                                         {{device.type.name}}
                                     </td>
                                     <td class="px-6 py-4 text-center text-gray-900">
-                                        <div class="text-sm text-green-900">سالم {{device.physicalStatus1Count |
-                                            persianDigit}}
+                                        <div class="text-sm text-green-900">سالم {{device.physicalStatus1Count | persianDigit}}
                                         </div>
                                         <div class="text-sm text-red-900">خراب {{device.physicalStatus2Count |
                                             persianDigit}}

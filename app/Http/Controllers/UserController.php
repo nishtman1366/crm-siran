@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserController extends Controller
 {
@@ -118,6 +119,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
+        $authUser = Auth::user();
         $userId = $request->route('id');
         $request->validateWithBag('userForm', [
             'parent_id' => 'required',
@@ -130,6 +132,12 @@ class UserController extends Controller
 
         $user = User::find($userId);
         if (is_null($user)) return response()->json('not found', 404);
+
+        if($user->isAdmin()){
+            if (!$authUser->isSuperUser()) {
+                throw new UnauthorizedHttpException('','شما دسترسی لازم برای این عملیات را ندارید.');
+            }
+        }
 
         if ($request->hasFile('companyLogo')) {
             Storage::disk('public')->delete('companies/' . $user->id . '/' . $user->company_logo);

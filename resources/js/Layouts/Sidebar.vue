@@ -105,6 +105,24 @@ ALTER TABLE `users` CHANGE `level` `level` ENUM('ADMIN','AGENT','MARKETER','SUPE
                             </li>
                         </template>
                         <template
+                            v-if="$page.user.level=='SUPERUSER' || $page.user.level=='ADMIN' || $page.user.level=='AGENT' || $page.user.level=='MARKETER'">
+                            <li class="header-menu">
+                                <span>تراکنشات</span>
+                            </li>
+                            <li v-if="$page.user.level=='SUPERUSER' || $page.user.level=='ADMIN' || $page.user.level=='AGENT' || $page.user.level=='MARKETER'">
+                                <inertia-link :href="route('dashboard.transactions.list')">
+                                    <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">people</i>
+                                    گزارش ماهیانه
+                                </inertia-link>
+                            </li>
+                            <li v-if="$page.user.level=='SUPERUSER'">
+                                <inertia-link :href="route('dashboard.transactions.create')">
+                                    <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">people</i>
+                                    بروزرسانی اطلاعات
+                                </inertia-link>
+                            </li>
+                        </template>
+                        <template
                             v-if="$page.user.level==='SUPERUSER' || $page.user.level==='ADMIN'">
                             <li class="header-menu">
                                 <span>کاربران</span>
