@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class SettingController extends Controller
 {
@@ -19,6 +22,10 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
+        $user = Auth::user();
+        if ($user->isSuperUser()) {
+            throw new UnauthorizedHttpException('', 'شما اجازه دسترسی به این بخش را ندارید');
+        }
         foreach ($request->except(['deleteLogo', 'COMPANY_LOGO']) as $item => $value) {
             $setting = Setting::where('key', $item)->get()->first();
             if (!is_null($setting)) $setting->update(['value' => $value]);
