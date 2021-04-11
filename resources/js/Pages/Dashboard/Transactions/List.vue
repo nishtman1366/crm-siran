@@ -213,10 +213,7 @@
                         <div>
                             <i class="material-icons text-center text-xl leading-5 align-middle mx-3">check</i>
                         </div>
-                        <p class="">اطلاعات تراکنشات
-                            مربوط به
-                            {{selectedDate.name}}
-                            وارد نشده است.</p>
+                        <p class="">تراکنشی در ماه انتخاب شده برای شما ثبت نشده است.</p>
                     </div>
                 </template>
             </template>
