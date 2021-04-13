@@ -849,42 +849,79 @@
                 <template #content>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-right">
                         <div class="my-3 p-2 border-r-4">
-                            جهت تایید نصب دستگاه در محل مشتری باید تصویر فرم نصب دستگاه را از طریق این بخش ارسال نمایید.
+                            جهت تایید نصب دستگاه در محل مشتری باید 'تصویر فرم نصب دستگاه' و 'تصویر پرفراژ تراکنش شاخص'
+                            را از طریق این بخش ارسال نمایید.
                         </div>
-                        <div
-                            class="w-full md:w-1/2 lg:w-1/3 mt-2 mx-auto flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                            <div class="space-y-1 text-center">
-                                <svg v-if="installFormFilePreview===''"
-                                     class="mx-auto h-12 w-12 text-gray-400"
-                                     stroke="currentColor"
-                                     fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                    <path
-                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                        stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"/>
-                                </svg>
-                                <img v-else :src="installFormFilePreview">
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="install_form_file"
-                                           class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                        <span>انتخاب فایل</span>
-                                        <input id="install_form_file"
-                                               name="install_form_file"
-                                               type="file"
-                                               @change="onInstallFormFileChange($event)"
-                                               class="sr-only">
-                                    </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div
+                                class="upload-container">
+                                <div class="space-y-1 text-center">
+                                    <svg v-if="installFormFilePreview===''"
+                                         class="mx-auto h-12 w-12 text-gray-400"
+                                         stroke="currentColor"
+                                         fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"/>
+                                    </svg>
+                                    <img v-else :src="installFormFilePreview">
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="install_form_file"
+                                               class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                            <span>انتخاب فایل</span>
+                                            <input id="install_form_file"
+                                                   name="install_form_file"
+                                                   type="file"
+                                                   @change="onInstallFormFileChange($event)"
+                                                   class="sr-only">
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        تصویر فرم نصب
+                                    </p>
+                                    <jet-input-error
+                                        :message="uploadInstallFormForm.error('install_form_file')"
+                                        class="mt-2"/>
+                                    <jet-input-error
+                                        :message="installFormFileUploadError"
+                                        class="mt-2"/>
                                 </div>
-                                <p class="text-xs text-gray-500">
-                                    تصویر فرم نصب
-                                </p>
-
-                                <jet-input-error
-                                    :message="uploadInstallFormForm.error('file')"
-                                    class="mt-2"/>
-                                <jet-input-error
-                                    :message="installFormFileUploadError"
-                                    class="mt-2"/>
+                            </div>
+                            <div
+                                class="upload-container">
+                                <div class="space-y-1 text-center">
+                                    <svg v-if="perforationFilePreview===''"
+                                         class="mx-auto h-12 w-12 text-gray-400"
+                                         stroke="currentColor"
+                                         fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"/>
+                                    </svg>
+                                    <img v-else :src="perforationFilePreview">
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="perforation_file"
+                                               class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                            <span>انتخاب فایل</span>
+                                            <input id="perforation_file"
+                                                   name="perforation_file"
+                                                   type="file"
+                                                   @change="onPerforationFileChange($event)"
+                                                   class="sr-only">
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        تصویر پرفراژ تراکنش شاخص
+                                    </p>
+                                    <jet-input-error
+                                        :message="uploadInstallFormForm.error('perforation_file')"
+                                        class="mt-2"/>
+                                    <jet-input-error
+                                        :message="installFormFileUploadError"
+                                        class="mt-2"/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1067,9 +1104,12 @@
                 installFormProfileId: '',
                 installFormFilePreview: '',
                 installFormFileUploadError: '',
+                perforationFilePreview: '',
+                perforationFileUploadError: '',
                 uploadInstallFormForm: this.$inertia.form({
                     '_method': 'PUT',
-                    file: '',
+                    install_form_file: '',
+                    perforation_file: '',
                 }, {
                     bag: 'uploadInstallFormForm',
                     resetOnSuccess: true
@@ -1303,8 +1343,20 @@
                     return;
                 }
                 this.installFormFileUploadError = '';
-                this.uploadInstallFormForm.file = e.target.files[0];
+                this.uploadInstallFormForm.install_form_file = e.target.files[0];
                 this.installFormFilePreview = URL.createObjectURL(file);
+            },
+            onPerforationFileChange(e) {
+                const file = e.target.files[0];
+                if (file.size > (this.$page.configs.maximumUploadSize * 1024)) {
+                    this.perforationFileUploadError = 'فایل انتخاب شده نباید بیشتر از '
+                        + this.$page.configs.maximumUploadSize
+                        + 'کیلوبایت باشد.';
+                    return;
+                }
+                this.perforationFileUploadError = '';
+                this.uploadInstallFormForm.perforation_file = e.target.files[0];
+                this.perforationFilePreview = URL.createObjectURL(file);
             },
             submitUploadInstallForm() {
                 this.uploadInstallFormForm.post(route('dashboard.profiles.update.installDevice', {profileId: this.installFormProfileId}))
@@ -1353,5 +1405,7 @@
 </script>
 
 <style scoped>
-
+    .upload-container {
+        @apply w-full mt-2 mx-auto flex justify-center px-6 py-6 border-2 border-gray-300 border-dashed rounded-md
+    }
 </style>

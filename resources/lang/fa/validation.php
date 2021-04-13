@@ -218,5 +218,8 @@ return [
 
         'post_category_id'=>'دسته بندی اخبار',
         'levels'=>'گروه های کاربری',
+
+        'install_form_file'=>'تصویر فرم نصب',
+        'perforation_file'=>'تصویر پرفراژ تراکنش شاخص',
     ],
 ];

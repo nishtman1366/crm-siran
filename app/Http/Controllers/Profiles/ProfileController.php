@@ -395,21 +395,25 @@ class ProfileController extends Controller
     public function installDevice(Request $request)
     {
         $request->validateWithBag('uploadInstallFormForm', [
-            'file' => 'required|file',
+            'install_form_file' => 'required|file',
+            'perforation_file' => 'required|file',
         ]);
 
         $profileId = $request->route('profileId');
         $profile = Profile::find($profileId);
         if (is_null($profile)) return response()->json(['message' => 'اطلاعات پرونده یافت نشد'], 404);
 
-        if ($request->hasFile('file')) {
-            LicenseController::upload($request->file('file'), 'install_device_form', $profileId);
+        if ($request->hasFile('install_form_file')) {
+            LicenseController::upload($request->file('install_form_file'), 'install_device_form', $profileId);
+        }
+        if ($request->hasFile('perforation_file')) {
+            LicenseController::upload($request->file('perforation_file'), 'pts', $profileId);
         }
 
         $profile->status = 8;
         $profile->save();
 
-        return redirect()->route('dashboard.profiles.list')->with(['message' => 'فرم تایید نصب دستگاه با موفقیت دریافت شد.']);
+        return redirect()->route('dashboard.profiles.list')->with(['message' => 'تایید نصب دستگاه با موفقیت دریافت شد.']);
     }
 
     public function getNewDeviceByAjax(Request $request)
