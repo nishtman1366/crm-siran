@@ -15,6 +15,8 @@ class SettingController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        if (!$user->hasRole('superuser')) throw new UnauthorizedHttpException('', 'شما اجازه دسترسی به این بخش را ندارید.');
         $settings = Setting::orderBy('id', 'ASC')->get();
         $pageTitle = $settings->where('key', 'PAGE_TITLE')->first();
         return Inertia::render('Dashboard/Settings/SettingsMain', compact('pageTitle'));

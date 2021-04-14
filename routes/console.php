@@ -107,8 +107,22 @@ Artisan::command('setProfileId', function () {
     });
 });
 
-Artisan::command('sms', function () {
-    $user = User::find(1);
-
-    $user->notifyNow(new \App\Notifications\Profiles\AdminNotification(1, ['order_id' => '12334']));
+Artisan::command('roles', function () {
+    $users = User::orderBy('id', 'ASC')->get()->each(function ($user) {
+        if ($user->isSuperUser()) {
+            $user->assignRole('superuser');
+        } elseif ($user->isAdmin()) {
+            $user->assignRole('admin');
+        } elseif ($user->isAgent()) {
+            $user->assignRole('agent');
+        } elseif ($user->isMarketer()) {
+            $user->assignRole('marketer');
+        } elseif ($user->isOffice()) {
+            $user->assignRole('office');
+        } elseif ($user->isTechnical()) {
+            $user->assignRole('technical');
+        }
+    });
 });
+
+

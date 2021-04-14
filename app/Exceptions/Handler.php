@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
@@ -47,6 +48,9 @@ class Handler extends ExceptionHandler
         }
         if ($e instanceof UnauthorizedHttpException) {
             return response()->view('errors.404', ['message' => $e->getMessage()]);
+        }
+        if ($e instanceof UnauthorizedException) {
+            return response()->view('errors.404', ['message' => 'شما اجازه دسترسی به این بخش را ندارید']);
         }
         if ($e instanceof NotificationException) return false;
 

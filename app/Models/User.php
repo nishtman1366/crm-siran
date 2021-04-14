@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -114,6 +116,13 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'parent_id', 'id');
     }
 
+    public function belongsToUser(User $user)
+    {
+        if (!is_null($this->parent)) if ($user->id == $this->parent->id) return true;
+
+        return false;
+    }
+
     public function isSuperUser()
     {
         if ($this->attributes['level'] == 'SUPERUSER') return true;
@@ -138,6 +147,20 @@ class User extends Authenticatable
     public function isMarketer()
     {
         if ($this->attributes['level'] == 'MARKETER') return true;
+
+        return false;
+    }
+
+    public function isOffice()
+    {
+        if ($this->attributes['level'] == 'OFFICE') return true;
+
+        return false;
+    }
+
+    public function isTechnical()
+    {
+        if ($this->attributes['level'] == 'TECHNICAL') return true;
 
         return false;
     }

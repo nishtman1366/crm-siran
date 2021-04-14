@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class UserController extends Controller
@@ -16,6 +17,9 @@ class UserController extends Controller
         $type = $request->route('type', null);
         $type = strtoupper($type);
         $user = Auth::user();
+
+        $this->checkUserPermissions($type, $user);
+
         $users = User::with('parent')->where(function ($query) use ($type, $user) {
             $query->where('level', $type);
             if ($user->level != 'SUPERUSER') {
@@ -46,6 +50,8 @@ class UserController extends Controller
         $type = strtoupper($type);
         $user = Auth::user();
 
+        $this->checkUserPermissions($type, $user);
+
         $usersType = $this->returnUsersType(strtoupper($type));
 
         $statuses = [
@@ -68,6 +74,9 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $authenticatedUser = Auth::user();
+        $type = $request->route('type');
+
         $request->validateWithBag('userForm', [
             'parent_id' => 'required',
             'name' => 'required',
@@ -76,7 +85,8 @@ class UserController extends Controller
             'mobile' => 'required|digits:11',
             'status' => 'required',
         ]);
-        $type = $request->route('type');
+
+        $this->checkUserPermissions($type, $authenticatedUser);
 
         $request->merge(['level' => strtoupper($type)]);
         $user = User::create($request->all());
@@ -95,7 +105,12 @@ class UserController extends Controller
     {
         $userId = $request->route('id');
         $user = User::find($userId);
-        if (is_null($user)) return response()->json('not found', 404);
+        if (is_null($user)) throw new NotFoundHttpException('اطلاعات کاربر مورد نظر یافت نشد.');
+        $authenticatedUser = Auth::user();
+        if (!$user->belongsToUser($authenticatedUser)) {
+            throw new UnauthorizedHttpException('', 'شما اجازه مشاهده این اطلاعات را ندارید.');
+        }
+
         $type = $request->route('type', null);
         $usersType = $this->returnUsersType(strtoupper($type));
         $statuses = [
@@ -119,7 +134,6 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $authUser = Auth::user();
         $userId = $request->route('id');
         $request->validateWithBag('userForm', [
             'parent_id' => 'required',
@@ -131,12 +145,11 @@ class UserController extends Controller
         ]);
 
         $user = User::find($userId);
-        if (is_null($user)) return response()->json('not found', 404);
+        if (is_null($user)) throw new NotFoundHttpException('اطلاعات کاربر مورد نظر یافت نشد.');
 
-        if($user->isAdmin()){
-            if (!$authUser->isSuperUser()) {
-                throw new UnauthorizedHttpException('','شما دسترسی لازم برای این عملیات را ندارید.');
-            }
+        $authenticatedUser = Auth::user();
+        if (!$user->belongsToUser($authenticatedUser)) {
+            throw new UnauthorizedHttpException('', 'شما اجازه مشاهده این اطلاعات را ندارید.');
         }
 
         if ($request->hasFile('companyLogo')) {
@@ -163,12 +176,17 @@ class UserController extends Controller
         $userId = $request->route('id');
         $type = $request->route('type');
 
-        User::destroy($userId);
+        $user = User::destroy($userId);
+        if (is_null($user)) throw new NotFoundHttpException('اطلاعات کاربر مورد نظر یافت نشد.');
+        $authenticatedUser = Auth::user();
+        if (!$user->belongsToUser($authenticatedUser)) {
+            throw new UnauthorizedHttpException('', 'شما اجازه مشاهده این اطلاعات را ندارید.');
+        }
 
         return redirect()->route('dashboard.users.list', ['type' => $type]);
     }
 
-    function returnUsersType($type)
+    public function returnUsersType($type)
     {
         switch ($type) {
             case 'ADMIN':
@@ -178,5 +196,28 @@ class UserController extends Controller
             case 'MARKETER':
                 return 'بازاریاب';
         }
+    }
+
+    public function checkUserPermissions($type, $user)
+    {
+        $type = strtoupper($type);
+        switch ($type) {
+            case 'ADMIN':
+                $roles = ['superuser'];
+                break;
+            case 'AGENT':
+            case 'OFFICE':
+            case 'TECHNICAL':
+                $roles = ['superuser', 'admin'];
+                break;
+            case 'MARKETER':
+                $roles = ['superuser', 'admin', 'agent'];
+                break;
+        }
+        if (!$user->hasRole($roles)) {
+            throw new UnauthorizedHttpException('', 'دسترسی به این بخش برای شما امکان پذیر نمی باشد.');
+        }
+
+        return true;
     }
 }

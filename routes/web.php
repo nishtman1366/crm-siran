@@ -47,7 +47,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
         Route::delete('{id}', 'UserController@destroy')->name('destroy');
     });
 
-    Route::prefix('settings')->name('settings.')->namespace('Settings')->group(function () {
+    Route::prefix('settings')->middleware('role:superuser')->name('settings.')->namespace('Settings')->group(function () {
         Route::get('', 'SettingController@index')->name('main');
         Route::put('', 'SettingController@update')->name('update');
 
@@ -186,7 +186,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
         });
     });
 
-    Route::prefix('posts')->name('posts.')->namespace('Posts')->group(function () {
+    Route::prefix('posts')->middleware('role:superuser')->name('posts.')->namespace('Posts')->group(function () {
         Route::get('', 'PostController@index')->name('list');
         Route::get('create', 'PostController@create')->name('create');
         Route::post('', 'PostController@store')->name('store');
