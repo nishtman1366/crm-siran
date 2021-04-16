@@ -23,7 +23,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dashboard.')->namespace('App\\Http\\Controllers')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])
+    ->prefix('dashboard')
+    ->name('dashboard.')
+    ->namespace('App\\Http\\Controllers')->group(function () {
     Route::get('', 'DashboardController@index')->name('main');
 
     Route::prefix('devices')->name('devices.')->group(function () {
@@ -205,7 +208,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
         });
     });
 
-    Route::namespace('Posts')->get('posts/{postId}/view', 'PostController@view')->name('posts.view');
+    Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
 
     Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
         Route::get('', 'TransactionController@index')->name('list');
