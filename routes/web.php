@@ -195,7 +195,6 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
         Route::delete('{postId}', 'PostController@destroy')->name('destroy');
 
         Route::get('archive', 'PostController@archive')->name('archive');
-        Route::get('{postId}/view', 'PostController@view')->name('view');
 
         Route::prefix('categories')->name('categories.')->group(function () {
             Route::get('', 'CategoryController@index')->name('list');
@@ -205,6 +204,8 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->name('dash
             Route::delete('{categoryId}', 'CategoryController@destroy')->name('destroy');
         });
     });
+
+    Route::namespace('Posts')->get('posts/{postId}/view', 'PostController@view')->name('posts.view');
 
     Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
         Route::get('', 'TransactionController@index')->name('list');
