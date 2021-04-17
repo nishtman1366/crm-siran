@@ -2,6 +2,7 @@
 
 namespace App\Models\Profiles;
 
+use App\Models\Variables\Psp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ class LicenseType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'key', 'file_name', 'required', 'status'];
+    protected $fillable = ['name', 'psp_id', 'key', 'file_name', 'required', 'status'];
 
     protected $appends = ['statusText', 'requireText'];
 
@@ -37,5 +38,10 @@ class LicenseType extends Model
                 return 'ندارد';
                 break;
         }
+    }
+
+    public function psp()
+    {
+        return $this->hasOne(Psp::class, 'id', 'psp_id');
     }
 }

@@ -33,6 +33,10 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        سرویس دهنده
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         کلید
                                     </th>
                                     <th scope="col"
@@ -56,6 +60,9 @@
                                         {{license.name}}
                                     </td>
                                     <td class="px-6 py-4 text-center text-gray-900">
+                                        {{license.psp && license.psp.name}}
+                                    </td>
+                                    <td class="px-6 py-4 text-center text-gray-900">
                                         {{license.key}}
                                     </td>
                                     <td class="px-6 py-4 text-center text-gray-900">
@@ -75,7 +82,7 @@
                                           {{license.statusText}}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-center text-gray-900">
+                                    <td class="px-6 py-4 text-center text-gray-900 whitespace-no-wrap">
                                         <button class="text-indigo-600 hover:text-indigo-900"
                                                 v-on:click="editLicense(license)">
                                             <svg style="display:inline;width:24px;height:24px" viewBox="0 0 24 24">
@@ -113,6 +120,16 @@
                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md border">
                             <jet-input-error
                                 :message="licenseForm.error('name')"
+                                class="mt-2"/>
+                        </div>
+                        <div class="my-2">
+                            <select name="psp_id" id="psp_id" v-model="licenseForm.psp_id"
+                                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md border">
+                                <option :value="''">سرویس دهنده</option>
+                                <option v-for="psp in psps" :key="psp.id" :value="psp.id">{{psp.name}}</option>
+                            </select>
+                            <jet-input-error
+                                :message="licenseForm.error('psp_id')"
                                 class="mt-2"/>
                         </div>
                         <div class="my-2">
@@ -201,6 +218,7 @@
         name: "LicenseTypes",
         components: {SettingsMain, JetButton, JetInputError, JetConfirmationModal, JetDangerButton, JetSecondaryButton},
         props: {
+            psps: Array,
             licenses: Array,
             searchQuery: String,
         },
@@ -213,6 +231,7 @@
                 licenseForm: this.$inertia.form({
                     '_method': 'POST',
                     name: '',
+                    psp_id: '',
                     key: '',
                     file_name: '',
                     required: 1,
@@ -232,6 +251,7 @@
                 this.licenseForm = this.$inertia.form({
                     '_method': 'POST',
                     name: '',
+                    psp_id: '',
                     key: '',
                     file_name: '',
                     required: 1,
@@ -245,6 +265,7 @@
             editLicense(license) {
                 this.licenseForm = this.$inertia.form({
                     '_method': 'PUT',
+                    psp_id: license.psp_id,
                     name: license.name,
                     key: license.key,
                     file_name: license.file_name,

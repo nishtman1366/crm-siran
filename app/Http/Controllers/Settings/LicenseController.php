@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profiles\LicenseType;
+use App\Models\Variables\Psp;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -14,15 +15,17 @@ class LicenseController extends Controller
     public function index(Request $request)
     {
         $searchQuery = $request->query('query', null);
-        $licenses = LicenseType::where(function ($query) use ($searchQuery) {
+        $licenses = LicenseType::with('psp')->where(function ($query) use ($searchQuery) {
             if (!is_null($searchQuery)) {
                 $query->where('name', 'LIKE', '%' . $searchQuery . '%');
             }
         })->orderBy('name')->get();
 
+        $psps = Psp::where('status', 1)->orderBy('name', 'ASC')->get();
         return Inertia::render('Dashboard/Settings/LicenseTypes', [
             'searchQuery' => $searchQuery,
             'licenses' => $licenses,
+            'psps' => $psps
         ]);
     }
 
@@ -30,6 +33,7 @@ class LicenseController extends Controller
     {
         $request->validateWithBag('licenseForm', [
             'name' => 'required',
+            'psp_id' => 'required|exists:psps,id',
             'key' => 'required|unique:license_types,key',
             'status' => 'required'
         ]);
@@ -44,6 +48,7 @@ class LicenseController extends Controller
         $id = $request->route('licenseId');
         $request->validateWithBag('licenseForm', [
             'name' => 'required',
+            'psp_id' => 'required|exists:psps,id',
             'key' => 'required|unique:license_types,key,' . $id,
             'status' => 'required'
         ]);

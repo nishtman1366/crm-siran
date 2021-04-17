@@ -146,6 +146,8 @@
                     return '';
                 }
                 let devicePspList = [];
+                console.log(this.deviceTypeForm.psp_id);
+
                 for (let psp of this.devicePsps) {
                     if (psp.psp_id == this.deviceTypeForm.psp_id) {
                         devicePspList.push(psp.device_type_id);

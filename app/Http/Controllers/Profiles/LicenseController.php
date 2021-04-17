@@ -30,18 +30,20 @@ class LicenseController extends Controller
             } else {
                 $query->where('key', $licenseType);
             }
-        })->get()->each(function ($type) use ($profile, &$errors) {
-            $licenseExistence = License::where('license_type_id', $type->id)->where('profile_id', $profile->id)->exists();
-            if (($type->key === 'asasname_file' || $type->key === 'agahi_file_1' || $type->key === 'agahi_file_2') && $profile->customer->type !== 'ORGANIZATION') {
+        })->where('psp_id', $profile->psp_id)
+            ->get()
+            ->each(function ($type) use ($profile, &$errors) {
+                $licenseExistence = License::where('license_type_id', $type->id)->where('profile_id', $profile->id)->exists();
+                if (($type->key === 'asasname_file' || $type->key === 'agahi_file_1' || $type->key === 'agahi_file_2') && $profile->customer->type !== 'ORGANIZATION') {
 
-            } elseif ($type->key === 'license_file' && $profile->business->has_license == 'NO') {
+                } elseif ($type->key === 'license_file' && $profile->business->has_license == 'NO') {
 
-            } elseif ($type->key === 'esteshhad_file' && $profile->business->has_license == 'YES') {
+                } elseif ($type->key === 'esteshhad_file' && $profile->business->has_license == 'YES') {
 
-            } else {
-                if (!$licenseExistence) $errors[$type->key] = sprintf('تصویر %s ارسال نشده است.', $type->name);
-            }
-        });
+                } else {
+                    if (!$licenseExistence) $errors[$type->key] = sprintf('تصویر %s ارسال نشده است.', $type->name);
+                }
+            });
 
         $shebaTypeId = LicenseType::where('key', 'sheba_file')->get()->first();
         foreach ($profile->accounts as $account) {
