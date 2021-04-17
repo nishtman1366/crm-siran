@@ -208,7 +208,7 @@ class ProfileController extends Controller
 
 
         $psps = Psp::where('status', 1)->orderBy('name', 'ASC')->get();
-        $licenseTypes = LicenseType::where('status', 1)->orderBy('name', 'ASC')->get();
+        $licenseTypes = LicenseType::where('status', 1)->where('psp_id', $profile->psp_id)->orderBy('name', 'ASC')->get();
         return Inertia::render('Dashboard/Profiles/ViewProfile', [
             'profile' => $profile,
             'psps' => $psps,
