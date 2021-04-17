@@ -30,7 +30,9 @@ class LicenseController extends Controller
             } else {
                 $query->where('key', $licenseType);
             }
-        })->where('psp_id', $profile->psp_id)
+        })->where(function ($query) use ($profile) {
+            $query->where('psp_id', null)->where('psp_id', $profile->psp_id);
+        })
             ->get()
             ->each(function ($type) use ($profile, &$errors) {
                 $licenseExistence = License::where('license_type_id', $type->id)->where('profile_id', $profile->id)->exists();
