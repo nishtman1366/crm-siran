@@ -31,7 +31,7 @@ class LicenseController extends Controller
                 $query->where('key', $licenseType);
             }
         })->where(function ($query) use ($profile) {
-            $query->where('psp_id', null)->where('psp_id', $profile->psp_id);
+            $query->where('psp_id', null)->orWhere('psp_id', $profile->psp_id);
         })
             ->get()
             ->each(function ($type) use ($profile, &$errors) {
