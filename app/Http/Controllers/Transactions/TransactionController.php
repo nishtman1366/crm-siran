@@ -32,15 +32,32 @@ class TransactionController extends Controller
             ->with('user.parent')
             ->with('user.parent.parent')
             ->with('date')
-            ->where(function ($query) use ($user) {
-                if ($user->isAdmin()) {
-                    $query->where('user_id', $user->id);
-                    $query->orWhereHas('user', function ($userQuery) use ($user) {
-                        $userQuery->where('parent_id', $user->id);
-                        $userQuery->orWhereHas('parent', function ($parentQuery) use ($user) {
-                            $parentQuery->where('parent_id', $user->id);
+            ->where(function ($query) use ($user, $adminId, $agentId, $marketerId) {
+                if ($adminId != 0 && ($agentId == 0 && $marketerId == 0)) {
+                    $query->where('user_id', $adminId);
+                    $query->orWhereHas('user', function ($userQuery) use ($adminId) {
+                        $userQuery->where('parent_id', $adminId);
+                        $userQuery->orWhereHas('parent', function ($parentQuery) use ($adminId) {
+                            $parentQuery->where('parent_id', $adminId);
                         });
                     });
+                } elseif ($agentId != 0 && $marketerId == 0) {
+                    $query->where('user_id', $agentId);
+                    $query->orWhereHas('user', function ($userQuery) use ($agentId) {
+                        $userQuery->where('parent_id', $agentId);
+                    });
+                } elseif ($marketerId != 0) {
+                    $query->where('user_id', $marketerId);
+                } else {
+                    if ($user->isAdmin()) {
+                        $query->where('user_id', $user->id);
+                        $query->orWhereHas('user', function ($userQuery) use ($user) {
+                            $userQuery->where('parent_id', $user->id);
+                            $userQuery->orWhereHas('parent', function ($parentQuery) use ($user) {
+                                $parentQuery->where('parent_id', $user->id);
+                            });
+                        });
+                    }
                 }
             })->where('date_id', $date)->orderBy('id', 'ASC')->get()->each(function (Model $transaction) {
                 $items = $transaction->getAttributes();
@@ -72,7 +89,7 @@ class TransactionController extends Controller
     public function create(Request $request)
     {
         $dates = Date::orderBy('id', 'DESC')->get();
-        $psps = Psp::orderBy('name', 'ASC')->get();
+        $psps = Psp::where('status', 1)->orderBy('name', 'ASC')->get();
 
         $dateId = (int)$request->query('date', null);
         $transactionsInfo = null;
@@ -191,6 +208,7 @@ class TransactionController extends Controller
                 'marketer_wage' => $userWages['marketer'],
             ];
         }
+
         Total::insert($list);
     }
 

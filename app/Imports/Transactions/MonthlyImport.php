@@ -24,7 +24,9 @@ class MonthlyImport implements ToModel, WithStartRow
 
     public function model(array $row)
     {
-        $profile = Profile::where('terminal_id', $row[0])->get()->first();
+        $terminalId = str_replace('\'', '', $row[0]);
+
+        $profile = Profile::where('terminal_id', trim($terminalId))->get()->first();
         if (!is_null($profile)) {
             $balance_wage = $row[41] ?? 0;
             $charge_wage = $row[42] ?? 0;

@@ -210,7 +210,7 @@ Route::middleware(['auth:sanctum', 'verified'])
 
     Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
 
-    Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
+    Route::prefix('transactions')->middleware('role:superuser|admin')->name('transactions.')->namespace('Transactions')->group(function () {
         Route::get('', 'TransactionController@index')->name('list');
 
         Route::get('update', 'TransactionController@create')->name('create');
