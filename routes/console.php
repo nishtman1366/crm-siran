@@ -108,7 +108,7 @@ Artisan::command('setProfileId', function () {
 });
 
 Artisan::command('roles', function () {
-    $users = User::orderBy('id', 'ASC')->get()->each(function ($user) {
+    $users = User::where('id', '>', 90)->orderBy('id', 'ASC')->get()->each(function ($user) {
         if ($user->isSuperUser()) {
             $user->assignRole('superuser');
         } elseif ($user->isAdmin()) {
