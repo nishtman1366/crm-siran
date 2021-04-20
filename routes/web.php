@@ -183,6 +183,7 @@ Route::middleware(['auth:sanctum', 'verified'])
 
             Route::prefix('licenses')->name('licenses.')->group(function () {
                 Route::post('', 'LicenseController@store')->name('store');
+                Route::put('{licenseId}', 'LicenseController@confirm')->name('confirm');
                 Route::delete('{licenseId}', 'LicenseController@destroy')->name('destroy');
                 Route::get('downloadZipArchive', 'LicenseController@downloadZipArchive')->name('downloadZipArchive');
             });

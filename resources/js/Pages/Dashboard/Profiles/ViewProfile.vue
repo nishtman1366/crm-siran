@@ -350,12 +350,22 @@
                                             <img :src="license.url" class="w-full">
                                             {{license.type.name}}
                                         </a>
-                                        <InertiaLink
-                                            v-if="(profile.status==0 || profile.status==10 || profile.status==11) || $page.user.level==='SUPERUSER' ? true : false"
-                                            :href="route('dashboard.profiles.licenses.destroy',{profileId:profile.id,licenseId:license.id})"
-                                            method="DELETE"
-                                            class="block text-red-600 hover:text-red-400">حذف این تصویر
-                                        </InertiaLink>
+                                        <div class="flex justify-center">
+                                            <InertiaLink
+                                                v-if="(profile.status==0 || profile.status==10 || profile.status==11) || $page.user.level==='SUPERUSER' ? true : false"
+                                                :href="route('dashboard.profiles.licenses.destroy',{profileId:profile.id,licenseId:license.id})"
+                                                method="DELETE"
+                                                class="text-white rounded-full bg-red-500 hover:bg-red-400 p-1 mx-1">
+                                                <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">delete</i>
+                                            </InertiaLink>
+                                            <InertiaLink
+                                                v-if="profile.status==8 && $page.user.level==='SUPERUSER' && license.status==0 ? true : false"
+                                                :href="route('dashboard.profiles.licenses.confirm',{profileId:profile.id,licenseId:license.id})"
+                                                method="PUT"
+                                                class="text-white rounded-full bg-green-500 hover:bg-green-400 p-1 mx-1">
+                                                <i class="material-icons h-5 w-5 text-center text-xl leading-5 align-middle">check</i>
+                                            </InertiaLink>
+                                        </div>
                                     </div>
                                     <div v-if="$page.user.level=='ADMIN' || $page.user.level=='SUPERUSER'"
                                          class="sm:col-span-8 text-left my-2">

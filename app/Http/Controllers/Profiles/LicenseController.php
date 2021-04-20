@@ -142,6 +142,39 @@ class LicenseController extends Controller
 
     /**
      * @param Request $request
+     * This function confirm the license file with the @param $licneseId in route
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function confirm(Request $request)
+    {
+        $licenseId = (int)$request->route('licenseId');
+        $profileId = (int)$request->route('profileId');
+        $profile = Profile::find($profileId);
+        if (is_null($profile)) throw new NotFoundHttpException('اطلاعات پرونده یافت نشد.');
+
+        $user = Auth::user();
+        if (!$user->isSuperuser()) {
+            if ($profile->user_id !== $user->id) throw new UnauthorizedHttpException('', 'شما اجازه دسترسی به این پرونده را ندارید.');
+
+            if ($profile->status !== 0 && $profile->status !== 10 && $profile->status !== 11) throw new UnauthorizedHttpException('', 'در این مرحله امکان حذف مدارک وجود ندارد.');
+        }
+
+        $license = License::find($licenseId);
+        if (is_null($license)) throw new NotFoundHttpException('مدرک مورد نظر یافت نشد.');
+        $license->status = 1;
+        $license->save();
+
+        $licenses = License::where('profile_id', $profileId)->where('status', 0)->exists();
+        if (!$licenses) {
+            $profile->confirmed = 1;
+            $profile->save();
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * @param Request $request
      * This function delete the license file with the @param $licneseId in route
      * @return \Illuminate\Http\RedirectResponse
      */
