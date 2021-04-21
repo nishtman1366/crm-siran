@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         $authenticatedUser = Auth::user();
         $type = $request->route('type');
-
+        $type = strtoupper($type);
         $request->validateWithBag('userForm', [
             'parent_id' => 'required',
             'name' => 'required',
@@ -88,8 +88,10 @@ class UserController extends Controller
 
         $this->checkUserPermissions($type, $authenticatedUser);
 
-        $request->merge(['level' => strtoupper($type)]);
+        $request->merge(['level' => $type]);
         $user = User::create($request->all());
+
+        $user->assignRole(strtolower($type));
 
         if ($request->hasFile('companyLogo')) {
             Storage::disk('public')->delete('companies/' . $user->id . '/' . $user->company_logo);
@@ -176,12 +178,13 @@ class UserController extends Controller
         $userId = $request->route('id');
         $type = $request->route('type');
 
-        $user = User::destroy($userId);
+        $user = User::find($userId);
         if (is_null($user)) throw new NotFoundHttpException('اطلاعات کاربر مورد نظر یافت نشد.');
         $authenticatedUser = Auth::user();
         if (!$user->belongsToUser($authenticatedUser)) {
             throw new UnauthorizedHttpException('', 'شما اجازه مشاهده این اطلاعات را ندارید.');
         }
+        $user->delete();
 
         return redirect()->route('dashboard.users.list', ['type' => $type]);
     }
