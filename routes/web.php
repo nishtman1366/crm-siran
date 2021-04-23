@@ -214,8 +214,6 @@ Route::middleware(['auth:sanctum', 'verified'])
             Route::put('{postId}', 'PostController@update')->name('update');
             Route::delete('{postId}', 'PostController@destroy')->name('destroy');
 
-            Route::get('archive', 'PostController@archive')->name('archive');
-
             Route::prefix('categories')->name('categories.')->group(function () {
                 Route::get('', 'CategoryController@index')->name('list');
                 Route::get('{categoryId}', 'CategoryController@view')->name('view');
@@ -226,6 +224,7 @@ Route::middleware(['auth:sanctum', 'verified'])
         });
 
         Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
+        Route::get('archive', 'PostController@archive')->name('archive');
 
         Route::prefix('transactions')->middleware('role:superuser|admin')->name('transactions.')->namespace('Transactions')->group(function () {
             Route::get('', 'TransactionController@index')->name('list');
