@@ -224,7 +224,8 @@ class PostController extends Controller
         $paginatedLinks = paginationLinks($posts);
 
         $posts->each(function ($post) {
-            $post->body = substr($post->body, 0, 250) . '...';
+//            $post->body = substr($post->body, 0, 250) . '...';
+            $post->body = '...';
         });
 
         return Inertia::render('Dashboard/Posts/Archive', compact('searchQuery', 'paginatedLinks', 'categoryId', 'posts', 'categories'));
