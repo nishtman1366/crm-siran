@@ -224,7 +224,7 @@ Route::middleware(['auth:sanctum', 'verified'])
         });
 
         Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
-        Route::get('posts/archive', 'PostController@archive')->name('posts.archive');
+        Route::get('posts/archive', 'Posts\\PostController@archive')->name('posts.archive');
 
         Route::prefix('transactions')->middleware('role:superuser|admin')->name('transactions.')->namespace('Transactions')->group(function () {
             Route::get('', 'TransactionController@index')->name('list');
