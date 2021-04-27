@@ -226,13 +226,15 @@ Route::middleware(['auth:sanctum', 'verified'])
         Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
         Route::get('posts/archive', 'Posts\\PostController@archive')->name('posts.archive');
 
-        Route::prefix('transactions')->middleware('role:superuser|admin')->name('transactions.')->namespace('Transactions')->group(function () {
+        Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
             Route::get('', 'TransactionController@index')->name('list');
 
-            Route::get('update', 'TransactionController@create')->name('create');
-            Route::post('update', 'TransactionController@store')->name('store');
-            Route::get('update/step2', 'TransactionController@store2')->name('store2');
+            Route::get('update', 'TransactionController@create')->middleware('role:superuser')->name('create');
+            Route::post('update', 'TransactionController@store')->middleware('role:superuser')->name('store');
+            Route::get('update/step2', 'TransactionController@store2')->middleware('role:superuser')->name('store2');
 
-            Route::post('dates', 'TransactionController@createDate')->name('dates.store');
+            Route::post('dates', 'TransactionController@createDate')->middleware('role:superuser')->name('dates.store');
         });
     });
+
+

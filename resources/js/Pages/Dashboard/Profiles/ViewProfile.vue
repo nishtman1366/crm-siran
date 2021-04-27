@@ -296,7 +296,7 @@
                                         <div class="grid  grid-cols-2 md:grid-cols-8 gap-y-6">
                                             <div class="col-1 sm:col-span-2">نوع ارتباط</div>
                                             <div class="col-1 sm:col-span-2 font-bold">
-                                                {{profile.device_type.type.name}}
+                                                {{profile.device_type && profile.device_type.type && profile.device_type.type.name}}
                                             </div>
                                             <div class="col-1 sm:col-span-2">مدل دستگاه</div>
                                             <div class="col-1 sm:col-span-2 font-bold">{{profile.device_type.name}}
@@ -348,7 +348,7 @@
                                          class="text-center text-indigo-600 sm:col-span-2">
                                         <a target="_blank" :href="license.url">
                                             <img :src="license.url" class="w-full">
-                                            {{license.type.name}}
+                                            {{license.type && license.type.name}}
                                         </a>
                                         <div class="flex justify-center">
                                             <InertiaLink

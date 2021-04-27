@@ -23,6 +23,7 @@
                                 در قسمت تلفن تماس، شماره تلفن تماس کاربر جدید وارد نماید. بهتر است در این قسمت شماره
                                 موبایل کاربر را وارد نمایید که در صورت نیاز اطلاع رسانی از طریق پیامک صورت گیرد.
                             </p>
+                            <p v-if="$page.user.level=='SUPERUSER' || (selectedUser.parent && selectedUser.parent.percent!=0)" class="mt-5 text-sm text-red-500">کارمزد تراکنشات باید عددی بین ۰ و ۱۰۰ باشد. دقت داشته باشید این عدد هنگام بروزرسانی ماهیانه مبلغ کارمزد تراکنشات بوسیله سیستم مورد استفاده قرار خواهد گرفت.</p>
                         </div>
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
@@ -160,6 +161,21 @@
                                             حذف تصویر کنونی
                                         </jet-secondary-button>
                                     </div>
+                                    <div v-if="$page.user.level=='SUPERUSER' || (selectedUser.parent && selectedUser.parent.percent!=0)"
+                                         class="sm:col-span-3">
+                                        <label for="percent" class="block text-sm font-medium text-gray-700">
+                                            کارمزد تراکنشات:
+                                        </label>
+                                        <input type="text"
+                                               class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md border"
+                                               placeholder="کارمزد"
+                                               ref="percent"
+                                               id="percent"
+                                               v-model="userForm.percent"
+                                               @keyup.enter.native="submitUserForm"/>
+                                        <jet-input-error :message="userForm.error('percent')"
+                                                         class="mt-2"/>
+                                    </div>
                                     <div class="col-6 sm:col-span-6 text-left">
                                         <button type="submit"
                                                 class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -205,6 +221,7 @@
                     mobile: this.selectedUser.mobile,
                     status: this.selectedUser.status,
                     company_name: this.selectedUser.company_name,
+                    percent: this.selectedUser.percent,
                     companyLogo: null,
                     deleteCompanyLogo: false,
                 }, {

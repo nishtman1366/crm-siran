@@ -172,7 +172,7 @@ return [
         'license_code' => 'شماره جواز کسب',
         'license_date' => 'تاریخ صدور جواز کسب',
         'license_file' => 'تصویر جواز کسب',
-        'tax_code'=>'کد مالیاتی',
+        'tax_code' => 'کد مالیاتی',
 
         'accounts.*.bank_id' => 'نام بانک',
         'accounts.*.branch' => 'کد شعبه',
@@ -211,15 +211,16 @@ return [
         'payment_date' => 'تاریخ پرداخت',
 
 
-        'pattern'=>'کد الگو',
-        'notification_type_id'=>'نوع اعلان',
-        'event'=>'نوع رخداد',
-        'level'=>'دریافت کننده',
+        'pattern' => 'کد الگو',
+        'notification_type_id' => 'نوع اعلان',
+        'event' => 'نوع رخداد',
+        'level' => 'دریافت کننده',
 
-        'post_category_id'=>'دسته بندی اخبار',
-        'levels'=>'گروه های کاربری',
+        'post_category_id' => 'دسته بندی اخبار',
+        'levels' => 'گروه های کاربری',
 
-        'install_form_file'=>'تصویر فرم نصب',
-        'perforation_file'=>'تصویر پرفراژ تراکنش شاخص',
+        'install_form_file' => 'تصویر فرم نصب',
+        'perforation_file' => 'تصویر پرفراژ تراکنش شاخص',
+        'percent' => 'کارمزد تراکنشات'
     ],
 ];

@@ -37,6 +37,7 @@ class User extends Authenticatable
         'status',
         'company_name',
         'company_logo',
+        'percent',
     ];
 
     /**
@@ -118,6 +119,7 @@ class User extends Authenticatable
 
     public function belongsToUser(User $user)
     {
+        if ($user->isSuperUser()) return true;
         if (!is_null($this->parent)) if ($user->id == $this->parent->id) return true;
 
         return false;

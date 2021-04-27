@@ -106,7 +106,7 @@ class UserController extends Controller
     public function view(Request $request)
     {
         $userId = $request->route('id');
-        $user = User::find($userId);
+        $user = User::with('parent')->find($userId);
         if (is_null($user)) throw new NotFoundHttpException('اطلاعات کاربر مورد نظر یافت نشد.');
         $authenticatedUser = Auth::user();
         if (!$user->belongsToUser($authenticatedUser)) {
@@ -143,6 +143,7 @@ class UserController extends Controller
             'username' => 'required|unique:users,id,' . $userId,
             'password' => 'nullable|min:6',
             'mobile' => 'required|digits:11',
+            'percent' => 'nullable|integer|min:0|max:100',
             'status' => 'required',
         ]);
 

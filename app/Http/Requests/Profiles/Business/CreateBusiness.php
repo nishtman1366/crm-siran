@@ -39,7 +39,7 @@ class CreateBusiness extends FormRequest
             'postal_code' => ['required', 'numeric', 'digits:10', new UniquePostalCode((int)$this->get('profile_id'))],
             'address' => 'required',
             'phone_code' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|numeric|digits:8',
             'has_license' => 'required|in:YES,NO',
             'tax_code' => ['required', 'numeric', 'digits:10',]
         ];

@@ -2,7 +2,7 @@
     <div class=" h-full">
         <jet-confirmation-modal maxWidth="md" :show="loading" @close="loading = false">
             <template #title>
-                در حال بارگزاری اطلاعات
+                در حال بارگذاری اطلاعات
             </template>
             <template #content>
                 <div class="w-full mt-3 text-center sm:mt-0">

@@ -21,6 +21,8 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $user = Auth::User();
+        if ($user->percent == 0) throw new \Spatie\Permission\Exceptions\UnauthorizedException(403);
+
         $dates = Date::orderBy('id', 'DESC')->get();
 
         $date = $request->query('dateId', $dates->first()->id);

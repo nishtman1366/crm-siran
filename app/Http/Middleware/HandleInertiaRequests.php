@@ -31,6 +31,7 @@ class HandleInertiaRequests
         });
         if ($request->user()) {
             $user = $request->user();
+//            dd($user->permissions);
             if ($user->isAdmin()) {
                 if (!is_null($user->company_logo)) $configs['companyLogo'] = $user->companyLogoUrl;
                 if (!is_null($user->company_name)) $configs['companyName'] = $user->company_name;
