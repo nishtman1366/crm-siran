@@ -226,7 +226,7 @@ Route::middleware(['auth:sanctum', 'verified'])
         Route::get('posts/{postId}/view', 'Posts\\PostController@view')->name('posts.view');
         Route::get('posts/archive', 'Posts\\PostController@archive')->name('posts.archive');
 
-        Route::prefix('transactions')->name('transactions.')->namespace('Transactions')->group(function () {
+        Route::prefix('transactions')->middleware('role:superuser')->name('transactions.')->namespace('Transactions')->group(function () {
             Route::get('', 'TransactionController@index')->name('list');
 
             Route::get('update', 'TransactionController@create')->middleware('role:superuser')->name('create');
